@@ -24,6 +24,9 @@ export class PosContainerContents implements ResourceAware {
 
   private readonly disconnected$ = new Subject<void>();
 
+  @State()
+  private uploadNewItem: boolean = false;
+
   onCreateNewFile() {
     this.createNewItem = 'file';
   }
@@ -32,7 +35,11 @@ export class PosContainerContents implements ResourceAware {
     this.createNewItem = 'folder';
   }
 
-  componentWillLoad() {
+  onUploadFile() {
+   this.uploadNewItem = true;
+  }
+
+  async componentWillLoad() {
     subscribeResource(this);
   }
 
@@ -40,8 +47,13 @@ export class PosContainerContents implements ResourceAware {
   handleKeyDown(ev: KeyboardEvent) {
     if (ev.key === 'Escape') {
       this.createNewItem = null;
+      this.uploadNewItem = false;
     }
   }
+
+  private onUploadDialogClosed = () => {
+    this.uploadNewItem = false;
+  };
 
   receiveResource = (resource: Thing) => {
     this.container = resource.assume(LdpContainer);
@@ -71,11 +83,22 @@ export class PosContainerContents implements ResourceAware {
         </li>,
       );
     }
+    if (this.uploadNewItem) {
+      items.unshift(
+        <li key="upload-new-item">
+          <pos-upload-new-container-item
+            container={this.container}
+            onPod-os:upload-dialog-closed={this.onUploadDialogClosed}
+          ></pos-upload-new-container-item>
+        </li>,
+      );
+    }
     return (
       <Host>
         <pos-container-toolbar
           onPod-os:create-new-file={() => this.onCreateNewFile()}
           onPod-os:create-new-folder={() => this.onCreateNewFolder()}
+          onPod-os:upload-file={() => this.onUploadFile()}
         ></pos-container-toolbar>
         {items.length > 0 ? <ul aria-label="Container contents">{items}</ul> : <p>The container is empty</p>}
       </Host>
