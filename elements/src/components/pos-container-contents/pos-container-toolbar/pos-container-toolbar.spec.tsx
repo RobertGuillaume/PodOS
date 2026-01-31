@@ -26,6 +26,11 @@ describe('pos-container-toolbar', () => {
             <sl-icon name="folder-plus"></sl-icon>
           </button>
         </sl-tooltip>
+          <sl-tooltip content="Upload file">
+          <button aria-label="Upload file">
+            <sl-icon name="upload"></sl-icon>
+          </button>
+        </sl-tooltip>
       </pos-container-toolbar>
     `);
   });
@@ -59,5 +64,20 @@ describe('pos-container-toolbar', () => {
     expect(newFolderButton).toEqualAttribute('aria-label', 'Create new folder');
     fireEvent.click(newFolderButton);
     expect(onCreateNewFolder).toHaveBeenCalled();
+  });
+  it('emits event when upload file button is clicked', async () => {
+    const page = await newSpecPage({
+      components: [PosContainerToolbar],
+      html: `<pos-container-toolbar />`,
+      supportsShadowDom: false,
+    });
+    const onUploadFile = jest.fn();
+    page.root.addEventListener('pod-os:upload-file', onUploadFile);
+    screen.logTestingPlaygroundURL();
+    const buttons = getAllByRole(page.root, 'button');
+    const uploadFileButton = buttons[2];
+    expect(uploadFileButton).toEqualAttribute('aria-label', 'Upload file');
+    fireEvent.click(uploadFileButton);
+    expect(onUploadFile).toHaveBeenCalled();
   });
 });
