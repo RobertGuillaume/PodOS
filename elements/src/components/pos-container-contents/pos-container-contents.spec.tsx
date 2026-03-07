@@ -7,6 +7,7 @@ import { newSpecPage } from '@stencil/core/testing';
 import { PosContainerContents } from './pos-container-contents';
 import { Components, LdpContainer } from '../../components';
 import PosCreateNewContainerItem = Components.PosCreateNewContainerItem;
+import PosUploadNewContainerItem = Components.PosUploadNewContainerItem;
 import { pressKey } from '../../test/pressKey';
 import { Subject } from 'rxjs';
 import { ContainerContent, Thing } from '@pod-os/core';
@@ -267,6 +268,90 @@ describe('pos-container-contents', () => {
 
       // then the input is hidden
       expect(page.root.querySelector('pos-create-new-container-item')).toBeNull();
+    });
+  });
+  describe('uploading new files', () => {
+    let page: any;
+    beforeEach(async () => {
+      // and given a page with container contents
+      page = await newSpecPage({
+        components: [PosContainerContents],
+        html: `<pos-container-contents />`,
+        supportsShadowDom: false,
+      });
+
+      // and a container resource is available
+      await page.rootInstance.receiveResource(resource);
+
+      // as well as (empty) container contents
+      observed$.next([]);
+      await page.waitForChanges();
+    });
+
+    it('shows upload dialog when event occurs', async () => {
+      // when the toolbar fires an upload-file event
+      const toolbar = page.root.querySelector('pos-container-toolbar');
+      expect(toolbar).not.toBeNull();
+      fireEvent(toolbar, new CustomEvent('pod-os:upload-file', {}));
+      await page.waitForChanges();
+
+      // then the upload dialog is shown
+      expect(page.root).toEqualHtml(`
+        <pos-container-contents>
+          <pos-container-toolbar></pos-container-toolbar>
+          <ul aria-label="Container contents">
+            <li><pos-upload-new-container-item></pos-upload-new-container-item></li>
+          </ul>
+        </pos-container-contents>
+      `);
+
+      // and the current container is passed into it
+      const uploadNew: PosUploadNewContainerItem = page.root.querySelector('pos-upload-new-container-item');
+      expect(uploadNew.container).toEqual(container);
+    });
+    it('shows upload dialog when uploadNewItem is set to true', async () => {
+      // when uploadNewItem is set to true
+      page.rootInstance.uploadNewItem = true;
+      await page.waitForChanges();
+
+      // then the upload dialog is shown
+      expect(page.root).toEqualHtml(`
+        <pos-container-contents>
+          <pos-container-toolbar></pos-container-toolbar>
+          <ul aria-label="Container contents">
+            <li><pos-upload-new-container-item></pos-upload-new-container-item></li>
+          </ul>
+        </pos-container-contents>
+      `);
+
+      // and the current container is passed into it
+      const uploadNew: PosUploadNewContainerItem = page.root.querySelector('pos-upload-new-container-item');
+      expect(uploadNew.container).toEqual(container);
+    });
+    it("hides upload dialog when escape is pressed", async () => {
+      // and the upload dialog is shown
+      page.rootInstance.showUploadDialog = true;
+      await page.waitForChanges();
+      expect(page.root.querySelector('pos-upload-new-container-item')).toBeDefined();
+
+      // when the user presses escape
+      await pressKey(page, 'Escape');
+
+      // then the upload dialog is hidden
+      expect(page.root.querySelector('pos-upload-new-container-item')).toBeNull();
+    });
+    it('hides upload dialog when it receives an upload-dialog-closed event', async () => {
+      page.rootInstance.uploadNewItem = true;
+      await page.waitForChanges();
+      expect(page.root.querySelector('pos-upload-new-container-item')).toBeDefined();
+
+      // when the upload-dialog-closed event is fired
+      const uploadNew: HTMLElement = page.root.querySelector('pos-upload-new-container-item');
+      fireEvent(uploadNew, new CustomEvent('pod-os:upload-dialog-closed', {}));
+      await page.waitForChanges();
+
+      // then the upload dialog is hidden
+      expect(page.root.querySelector('pos-upload-new-container-item')).toBeNull();
     });
   });
 });

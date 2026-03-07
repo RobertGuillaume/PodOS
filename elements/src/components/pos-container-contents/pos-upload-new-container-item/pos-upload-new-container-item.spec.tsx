@@ -1,4 +1,4 @@
-import { PodOS, HttpProblem } from '@pod-os/core';
+import { PodOS } from '@pod-os/core';
 
 jest.mock('../../events/usePodOS');
 jest.mock('@shoelace-style/shoelace/dist/components/dialog/dialog.js', () => ({}));
@@ -10,7 +10,6 @@ import { when } from 'jest-when';
 
 import { mockPodOS } from '../../../test/mockPodOS';
 import { fireEvent } from '@testing-library/dom';
-import { errAsync, ok, okAsync } from 'neverthrow';
 
 describe ('pos-upload-new-container-item', () => {
   let os: PodOS;
@@ -40,13 +39,16 @@ describe ('pos-upload-new-container-item', () => {
       html: `<pos-upload-new-container-item></pos-upload-new-container-item>`,
       supportsShadowDom: false,
     });
+    page.rootInstance.container = { uri: 'https://pod.test/container/' };
 
     const uploadDialogClosedHandler = jest.fn();
-    page.root.addEventListener('pod-os:upload-dialog-closed', uploadDialogClosedHandler);
+    page.root?.addEventListener('pod-os:upload-dialog-closed', uploadDialogClosedHandler);
 
-    const dialog = page.root.querySelector('sl-dialog') as HTMLElement;
+    const dialog = page.root?.querySelector('sl-dialog') as HTMLElement;
     fireEvent(dialog, new CustomEvent('sl-after-hide'));
+    await page.waitForChanges();
 
+    expect(os.fetch).toHaveBeenCalledWith('https://pod.test/container/');
     expect(uploadDialogClosedHandler).toHaveBeenCalled();
   });
   it('emits event when upload is done', async () => {
@@ -55,13 +57,16 @@ describe ('pos-upload-new-container-item', () => {
       html: `<pos-upload-new-container-item></pos-upload-new-container-item>`,
       supportsShadowDom: false,
     });
+    page.rootInstance.container = { uri: 'https://pod.test/container/' };
 
     const uploadDialogClosedHandler = jest.fn();
-    page.root.addEventListener('pod-os:upload-dialog-closed', uploadDialogClosedHandler);
+    page.root?.addEventListener('pod-os:upload-dialog-closed', uploadDialogClosedHandler);
 
-    const upload = page.root.querySelector('pos-upload') as HTMLElement;
+    const upload = page.root?.querySelector('pos-upload') as HTMLElement;
     fireEvent(upload, new CustomEvent('pod-os:upload-done'));
+    await page.waitForChanges();
 
+    expect(os.fetch).toHaveBeenCalledWith('https://pod.test/container/');
     expect(uploadDialogClosedHandler).toHaveBeenCalled();
   });
   it('emits event when upload is cancelled', async () => {
@@ -70,13 +75,16 @@ describe ('pos-upload-new-container-item', () => {
       html: `<pos-upload-new-container-item></pos-upload-new-container-item>`,
       supportsShadowDom: false,
     });
+    page.rootInstance.container = { uri: 'https://pod.test/container/' };
 
     const uploadDialogClosedHandler = jest.fn();
-    page.root.addEventListener('pod-os:upload-dialog-closed', uploadDialogClosedHandler);
+    page.root?.addEventListener('pod-os:upload-dialog-closed', uploadDialogClosedHandler);
 
-    const upload = page.root.querySelector('pos-upload') as HTMLElement;
+    const upload = page.root?.querySelector('pos-upload') as HTMLElement;
     fireEvent(upload, new CustomEvent('pod-os:upload-cancel'));
+    await page.waitForChanges();
 
+    expect(os.fetch).toHaveBeenCalledWith('https://pod.test/container/');
     expect(uploadDialogClosedHandler).toHaveBeenCalled();
   });
 });
