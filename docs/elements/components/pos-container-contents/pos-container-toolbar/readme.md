@@ -9,6 +9,7 @@
 | -------------------------- | ----------- | ------------------- |
 | `pod-os:create-new-file`   |             | `CustomEvent<void>` |
 | `pod-os:create-new-folder` |             | `CustomEvent<void>` |
+| `pod-os:upload-file`       |             | `CustomEvent<void>` |
 
 
 ## Dependencies

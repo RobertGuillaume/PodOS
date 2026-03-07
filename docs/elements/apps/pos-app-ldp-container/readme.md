@@ -26,7 +26,9 @@ graph TD;
   pos-container-contents --> pos-resource
   pos-container-contents --> pos-container-item
   pos-container-contents --> pos-create-new-container-item
+  pos-container-contents --> pos-upload-new-container-item
   pos-container-contents --> pos-container-toolbar
+  pos-upload-new-container-item --> pos-upload
   pos-subjects --> pos-rich-link
   pos-rich-link --> pos-label
   pos-rich-link --> pos-description

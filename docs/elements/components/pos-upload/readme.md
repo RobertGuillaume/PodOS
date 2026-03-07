@@ -17,12 +17,14 @@
 
  - [pos-picture](../pos-picture)
  - [pos-tool-attachments](../../tools/pos-tool-attachments)
+ - [pos-upload-new-container-item](../pos-container-contents/pos-upload-new-container-item)
 
 ### Graph
 ```mermaid
 graph TD;
   pos-picture --> pos-upload
   pos-tool-attachments --> pos-upload
+  pos-upload-new-container-item --> pos-upload
   style pos-upload fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
