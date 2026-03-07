@@ -23,6 +23,7 @@ export class PosUploadNewContainerItem {
   }
 
   private hideUploadDialog = async () => {
+    await this.os.fetch(this.container.uri);
     this.uploadDialogClosedEmitter.emit();
   };
 
