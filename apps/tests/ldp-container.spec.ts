@@ -4,6 +4,7 @@ import { test } from "./fixtures";
 import { alice } from "./fixtures/credentials";
 import { signIn } from "./actions/signIn";
 import { v4 as random } from "uuid";
+import * as path from "node:path";
 
 test.describe("An LDP container", () => {
   test("show its own contents", async ({ page, navigationBar }) => {
@@ -128,6 +129,46 @@ test.describe("An LDP container", () => {
         .getByRole("article", { name: folderName })
         .describe("Overview card");
       await expect(overview, "has container type").toHaveText(/BasicContainer/);
+    });
+  });
+  test("can upload a file to the container", async ({
+    page,
+    navigationBar,
+    ldpContainerTool,
+  }) => {
+    const TEST_IMAGE_PATH = path.join(__dirname, "./assets/test-tube.jpg");
+    const filename =TEST_IMAGE_PATH.split(path.sep).pop() as string;
+
+    await test.step("Given PodOS Browser is open", async () => {
+      await page.goto("/");
+    });
+
+    await test.step("and the pod owner is signed in", async () => {
+      await signIn(page, alice);
+    });
+
+    await test.step("and a container is shown ", async () => {
+      await navigationBar.fillAndSubmit("http://localhost:4000/alice/");
+    });
+
+    await test.step("when the user uploads a file", async () => {
+      await ldpContainerTool.uploadFile(TEST_IMAGE_PATH);
+    });
+    
+    await test.step("then the file is uploaded and shown", async () => {
+      await page.waitForLoadState("networkidle");
+      const items = page
+        .locator("pos-container-item")
+        .getByRole("listitem");
+      const uploadedItem = page
+        .locator("pos-container-contents li")
+        .filter({ hasText: filename });
+
+      await expect(uploadedItem).toHaveCount(1);
+      await expect(uploadedItem.getByRole("link")).toHaveAttribute(
+        "href",
+        `http://localhost:4000/alice/${filename}`,
+      );
     });
   });
 });
