@@ -33,8 +33,6 @@ export class PosUploadNewContainerItem {
         <pos-upload
           accept={null}
           uploader={file => this.os.files().createNewFile(this.container, file)}
-          onPod-os:upload-done={this.hideUploadDialog}
-          onPod-os:upload-cancel={this.hideUploadDialog}
         ></pos-upload>
       </sl-dialog>
     );
