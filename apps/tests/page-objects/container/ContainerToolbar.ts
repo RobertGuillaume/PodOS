@@ -20,4 +20,10 @@ export class ContainerToolbar {
       .getByRole("button", { name: "Create new folder" })
       .describe("Create new folder button");
   }
+
+  uploadFileButton() {
+    return this.toolbar
+      .getByRole("button", { name: "Upload file" })
+      .describe("Upload file button");
+  }
 }

@@ -14,6 +14,9 @@ export class PosContainerToolbar {
   @Event({ eventName: 'pod-os:create-new-folder' })
   createNewFolder: EventEmitter<void>;
 
+  @Event({ eventName: 'pod-os:upload-file' })
+  uploadFile: EventEmitter<void>;
+
   render() {
     return (
       <Host role="toolbar" aria-label="Container actions">
@@ -25,6 +28,11 @@ export class PosContainerToolbar {
         <sl-tooltip content="Create new folder">
           <button aria-label="Create new folder" onClick={() => this.createNewFolder.emit()}>
             <sl-icon name="folder-plus"></sl-icon>
+          </button>
+        </sl-tooltip>
+         <sl-tooltip content="Upload file">
+          <button aria-label="Upload file" onClick={() => this.uploadFile.emit()}>
+            <sl-icon name="upload"></sl-icon>
           </button>
         </sl-tooltip>
       </Host>

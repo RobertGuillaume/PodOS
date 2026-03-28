@@ -28,4 +28,13 @@ export class ContainerContents {
     await input.fill(newFile);
     await input.press("Enter");
   }
+
+  async closeUploadDialog() {
+    const closeButton = this.list
+      .getByRole("button", {
+        name: "Close",
+      })
+      .describe("Close upload dialog button");
+    await closeButton.click();
+  }
 }

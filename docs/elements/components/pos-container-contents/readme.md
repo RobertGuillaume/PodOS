@@ -21,6 +21,7 @@
 - [pos-resource](../pos-resource)
 - [pos-container-item](pos-container-item)
 - [pos-create-new-container-item](pos-create-new-container-item)
+- [pos-upload-new-container-item](pos-upload-new-container-item)
 - [pos-container-toolbar](pos-container-toolbar)
 
 ### Graph
@@ -29,7 +30,9 @@ graph TD;
   pos-container-contents --> pos-resource
   pos-container-contents --> pos-container-item
   pos-container-contents --> pos-create-new-container-item
+  pos-container-contents --> pos-upload-new-container-item
   pos-container-contents --> pos-container-toolbar
+  pos-upload-new-container-item --> pos-upload
   pos-app-ldp-container --> pos-container-contents
   style pos-container-contents fill:#f9f,stroke:#333,stroke-width:4px
 ```

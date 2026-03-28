@@ -355,6 +355,9 @@ export namespace Components {
         "accept": string[];
         "uploader": (file: File) => ResultAsync<{ url: string }, HttpProblem | NetworkProblem>;
     }
+    interface PosUploadNewContainerItem {
+        "container": LdpContainer;
+    }
     interface PosUserMenu {
         "webId": string;
     }
@@ -508,6 +511,10 @@ export interface PosTypeBadgesCustomEvent<T> extends CustomEvent<T> {
 export interface PosTypeRouterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPosTypeRouterElement;
+}
+export interface PosUploadNewContainerItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPosUploadNewContainerItemElement;
 }
 export interface PosUserMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -713,6 +720,7 @@ declare global {
     interface HTMLPosContainerToolbarElementEventMap {
         "pod-os:create-new-file": void;
         "pod-os:create-new-folder": void;
+        "pod-os:upload-file": void;
     }
     interface HTMLPosContainerToolbarElement extends Components.PosContainerToolbar, HTMLStencilElement {
         addEventListener<K extends keyof HTMLPosContainerToolbarElementEventMap>(type: K, listener: (this: HTMLPosContainerToolbarElement, ev: PosContainerToolbarCustomEvent<HTMLPosContainerToolbarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1318,6 +1326,23 @@ declare global {
         prototype: HTMLPosUploadElement;
         new (): HTMLPosUploadElement;
     };
+    interface HTMLPosUploadNewContainerItemElementEventMap {
+        "pod-os:upload-dialog-closed": void;
+    }
+    interface HTMLPosUploadNewContainerItemElement extends Components.PosUploadNewContainerItem, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPosUploadNewContainerItemElementEventMap>(type: K, listener: (this: HTMLPosUploadNewContainerItemElement, ev: PosUploadNewContainerItemCustomEvent<HTMLPosUploadNewContainerItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPosUploadNewContainerItemElementEventMap>(type: K, listener: (this: HTMLPosUploadNewContainerItemElement, ev: PosUploadNewContainerItemCustomEvent<HTMLPosUploadNewContainerItemElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPosUploadNewContainerItemElement: {
+        prototype: HTMLPosUploadNewContainerItemElement;
+        new (): HTMLPosUploadNewContainerItemElement;
+    };
     interface HTMLPosUserMenuElementEventMap {
         "pod-os:logout": any;
         "pod-os:link": any;
@@ -1412,6 +1437,7 @@ declare global {
         "pos-type-index-entries": HTMLPosTypeIndexEntriesElement;
         "pos-type-router": HTMLPosTypeRouterElement;
         "pos-upload": HTMLPosUploadElement;
+        "pos-upload-new-container-item": HTMLPosUploadNewContainerItemElement;
         "pos-user-menu": HTMLPosUserMenuElement;
         "pos-value": HTMLPosValueElement;
     }
@@ -1532,6 +1558,7 @@ declare namespace LocalJSX {
     interface PosContainerToolbar {
         "onPod-os:create-new-file"?: (event: PosContainerToolbarCustomEvent<void>) => void;
         "onPod-os:create-new-folder"?: (event: PosContainerToolbarCustomEvent<void>) => void;
+        "onPod-os:upload-file"?: (event: PosContainerToolbarCustomEvent<void>) => void;
     }
     interface PosCreateNewContainerItem {
         "container": LdpContainer;
@@ -1848,6 +1875,10 @@ declare namespace LocalJSX {
         "accept"?: string[];
         "uploader"?: (file: File) => ResultAsync<{ url: string }, HttpProblem | NetworkProblem>;
     }
+    interface PosUploadNewContainerItem {
+        "container": LdpContainer;
+        "onPod-os:upload-dialog-closed"?: (event: PosUploadNewContainerItemCustomEvent<void>) => void;
+    }
     interface PosUserMenu {
         "onPod-os:link"?: (event: PosUserMenuCustomEvent<any>) => void;
         "onPod-os:logout"?: (event: PosUserMenuCustomEvent<any>) => void;
@@ -2010,6 +2041,7 @@ declare namespace LocalJSX {
         "pos-type-index-entries": Omit<PosTypeIndexEntries, keyof PosTypeIndexEntriesAttributes> & { [K in keyof PosTypeIndexEntries & keyof PosTypeIndexEntriesAttributes]?: PosTypeIndexEntries[K] } & { [K in keyof PosTypeIndexEntries & keyof PosTypeIndexEntriesAttributes as `attr:${K}`]?: PosTypeIndexEntriesAttributes[K] } & { [K in keyof PosTypeIndexEntries & keyof PosTypeIndexEntriesAttributes as `prop:${K}`]?: PosTypeIndexEntries[K] };
         "pos-type-router": PosTypeRouter;
         "pos-upload": PosUpload;
+        "pos-upload-new-container-item": PosUploadNewContainerItem;
         "pos-user-menu": Omit<PosUserMenu, keyof PosUserMenuAttributes> & { [K in keyof PosUserMenu & keyof PosUserMenuAttributes]?: PosUserMenu[K] } & { [K in keyof PosUserMenu & keyof PosUserMenuAttributes as `attr:${K}`]?: PosUserMenuAttributes[K] } & { [K in keyof PosUserMenu & keyof PosUserMenuAttributes as `prop:${K}`]?: PosUserMenu[K] } & OneOf<"webId", PosUserMenu["webId"], PosUserMenuAttributes["webId"]>;
         "pos-value": Omit<PosValue, keyof PosValueAttributes> & { [K in keyof PosValue & keyof PosValueAttributes]?: PosValue[K] } & { [K in keyof PosValue & keyof PosValueAttributes as `attr:${K}`]?: PosValueAttributes[K] } & { [K in keyof PosValue & keyof PosValueAttributes as `prop:${K}`]?: PosValue[K] };
     }
@@ -2138,6 +2170,7 @@ declare module "@stencil/core" {
              */
             "pos-type-router": LocalJSX.IntrinsicElements["pos-type-router"] & JSXBase.HTMLAttributes<HTMLPosTypeRouterElement>;
             "pos-upload": LocalJSX.IntrinsicElements["pos-upload"] & JSXBase.HTMLAttributes<HTMLPosUploadElement>;
+            "pos-upload-new-container-item": LocalJSX.IntrinsicElements["pos-upload-new-container-item"] & JSXBase.HTMLAttributes<HTMLPosUploadNewContainerItemElement>;
             "pos-user-menu": LocalJSX.IntrinsicElements["pos-user-menu"] & JSXBase.HTMLAttributes<HTMLPosUserMenuElement>;
             /**
              * Shows a single value linked to the resource using the given predicate.
